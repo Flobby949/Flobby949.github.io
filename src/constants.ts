@@ -7,6 +7,8 @@ import IconWhatsapp from "@/assets/icons/IconWhatsapp.svg";
 import IconFacebook from "@/assets/icons/IconFacebook.svg";
 import IconTelegram from "@/assets/icons/IconTelegram.svg";
 import IconPinterest from "@/assets/icons/IconPinterest.svg";
+import IconHome from "@/assets/icons/IconHome.svg";
+import IconCsdn from "@/assets/icons/IconCsdn.svg";
 import { SITE } from "@/config";
 
 interface Social {
@@ -18,10 +20,22 @@ interface Social {
 
 export const SOCIALS: Social[] = [
   {
+    name: "Home",
+    href: "https://www.flobby.top",
+    linkTitle: `Flobby 的个人主页`,
+    icon: IconHome,
+  },
+  {
     name: "GitHub",
     href: "https://github.com/Flobby949",
     linkTitle: `${SITE.title} on GitHub`,
     icon: IconGitHub,
+  },
+  {
+    name: "CSDN",
+    href: "https://csdn.flobby.top",
+    linkTitle: `Flobby 的 CSDN 博客`,
+    icon: IconCsdn,
   },
 ] as const;
 
