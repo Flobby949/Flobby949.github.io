@@ -67,3 +67,8 @@ html[data-theme="dark"] {
 :target {
   scroll-margin-block: 1rem;
 }
+
+#toc {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-muted) transparent;
+}

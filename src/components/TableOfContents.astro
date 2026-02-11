@@ -1,0 +1,90 @@
+---
+export interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+
+{
+  tocHeadings.length > 0 && (
+    <nav
+      id="toc"
+      class="hidden xl:block fixed top-24 max-h-[calc(100vh-8rem)] w-56 overflow-y-auto text-sm"
+      aria-label="Table of Contents"
+    >
+      <p class="mb-2 font-bold text-foreground/80">目录</p>
+      <ul class="space-y-1.5 border-s border-border ps-3">
+        {tocHeadings.map(h => (
+          <li class:list={[{ "ps-3": h.depth === 3 }]}>
+            <a
+              href={`#${h.slug}`}
+              class="toc-link block truncate text-foreground/50 transition-colors duration-200 hover:text-accent"
+              data-slug={h.slug}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script is:inline data-astro-rerun>
+  function initToc() {
+    const tocLinks = document.querySelectorAll(".toc-link");
+    if (!tocLinks.length) return;
+
+    // Position the TOC relative to the content area
+    function positionToc() {
+      const main = document.getElementById("main-content");
+      const toc = document.getElementById("toc");
+      if (!main || !toc) return;
+      const mainRect = main.getBoundingClientRect();
+      const right = mainRect.right;
+      toc.style.left = `${right + 24}px`;
+    }
+    positionToc();
+    window.addEventListener("resize", positionToc);
+
+    // IntersectionObserver for active heading
+    const headingEls = Array.from(
+      document.querySelectorAll("article h2, article h3")
+    );
+    if (!headingEls.length) return;
+
+    let activeSlug = headingEls[0]?.id;
+
+    function setActive(slug) {
+      if (slug === activeSlug) return;
+      activeSlug = slug;
+      tocLinks.forEach(link => {
+        if (link.dataset.slug === slug) {
+          link.classList.add("text-accent", "font-medium");
+          link.classList.remove("text-foreground/50");
+        } else {
+          link.classList.remove("text-accent", "font-medium");
+          link.classList.add("text-foreground/50");
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+            break;
+          }
+        }
+      },
+      { rootMargin: "0px 0px -70% 0px", threshold: 0.1 }
+    );
+
+    headingEls.forEach(el => observer.observe(el));
+  }
+  initToc();
+  document.addEventListener("astro:after-swap", initToc);
+</script>
